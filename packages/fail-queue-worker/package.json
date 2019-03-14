@@ -1,0 +1,48 @@
+{
+  "name": "fail-queue-worker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js",
+    "flow": "flow",
+    "flow:check": "flow check ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kuunika/dhis2-fail-queue-worker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kuunika/dhis2-fail-queue-worker/issues"
+  },
+  "homepage": "https://github.com/Kuunika/dhis2-fail-queue-worker#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-flow": "^6.23.0",
+    "eslint": "^5.14.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "nodemon": "^1.18.9"
+  },
+  "dependencies": {
+    "amqplib": "^0.5.3",
+    "async": "^2.6.2",
+    "axios": "^0.18.0",
+    "chalk": "^2.4.2",
+    "dotenv": "^6.2.0",
+    "faker": "^4.1.0",
+    "flow-bin": "^0.93.0",
+    "moment": "^2.24.0",
+    "mysql2": "^1.6.4",
+    "sequelize": "^4.42.0",
+    "winston": "^3.2.1"
+  }
+}

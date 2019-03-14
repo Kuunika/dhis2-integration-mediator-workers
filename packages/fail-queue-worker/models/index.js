@@ -1,0 +1,6 @@
+module.exports.getClientModel = require('./Client')
+module.exports.getDataSetModel = require('./DataSet')
+module.exports.getMigrationModel = require('./Migration')
+module.exports.getFailQueueModel = require('./FailQueue')
+module.exports.getDataElementModel = require('./DataElement')
+module.exports.getMigrationDataElementsModel = require('./MigrationDataElements')
