@@ -1,8 +1,7 @@
-const { configureLogger, loadEnvironmentVariables } = require('./helpers')
+const { configureLogger } = require('./helpers')
 const consumer = require('./consumer')
 
 const main = async () => {
-  await loadEnvironmentVariables()
   await configureLogger()
   await consumer()
 }

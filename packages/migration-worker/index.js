@@ -222,7 +222,6 @@ const handleQueueConnection = async (err, conn) => {
 };
 
 module.exports = () => {
-  require("dotenv").config();
   const host = process.env.MW_QUEUE_HOST || "amqp://localhost"
   amqp.connect(
     host,
