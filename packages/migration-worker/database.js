@@ -19,8 +19,8 @@ module.exports = async (spinner) => {
   await spinner.info(blue("database : preparing connection"))
 
   const host = process.env.MW_DATABASE_HOST || 'localhost'
-  const username = process.env.MW_DATABASE_USERNAME || 'root'
-  const password = process.env.MW_DATABASE_PASSWORD || 'root'
+  const username = process.env.MW_DATABASE_USERNAME || ''
+  const password = process.env.MW_DATABASE_PASSWORD || ''
   const database = process.env.MW_DATABASE
 
   spinner.succeed(cyan('database : database variables are set'));

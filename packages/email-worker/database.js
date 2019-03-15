@@ -1,34 +1,34 @@
-const ora = require("ora");
-const Sequelize = require("sequelize");
+const ora = require('ora')
+const Sequelize = require('sequelize')
 
-const { red, cyan, blue } = require("chalk");
+const { red, cyan, blue } = require('chalk')
 
 const pool = {
   max: 5,
   min: 0,
   acquire: 30000,
   idle: 10000
-};
+}
 
 module.exports = async spinner => {
-  await spinner.info(blue("database : preparing connection"));
+  await spinner.info(blue('database : preparing connection'))
 
-  const host = process.env.DEW_DATABASE_HOST || "localhost";
-  const username = process.env.DEW_DATABASE_USERNAME || "root";
-  const password = process.env.DEW_DATABASE_PASSWORD || "root";
-  const database = process.env.DEW_DATABASE;
+  const host = process.env.DEW_DATABASE_HOST || 'localhost';
+  const username = process.env.DEW_DATABASE_USERNAME || '';
+  const password = process.env.DEW_DATABASE_PASSWORD || '';
+  const database = process.env.DEW_DATABASE
 
-  spinner.succeed(cyan("database : database variables are set"));
+  spinner.succeed(cyan('database : database variables are set'))
 
   const options = {
     host,
-    dialect: "mysql",
+    dialect: 'mysql',
     operatorsAliases: false,
     logging: false,
     pool
-  };
+  }
 
-  const sequelize = new Sequelize(database, username, password, options);
+  const sequelize = new Sequelize(database, username, password, options)
 
   sequelize
     .authenticate()
@@ -37,14 +37,14 @@ module.exports = async spinner => {
         cyan(
           `database: connection established successfully to "${database}" database`
         )
-      );
-      spinner.stop();
+      )
+      spinner.stop()
     })
     .catch(err => {
-      spinner.fail(`${"database: Unable to connect to the database" + err}`);
-      spinner.stop();
-      process.exit(1);
-    });
+      spinner.fail(`${'database: Unable to connect to the database' + err}`)
+      spinner.stop()
+      process.exit(1)
+    })
 
-  return sequelize;
+  return sequelize
 };

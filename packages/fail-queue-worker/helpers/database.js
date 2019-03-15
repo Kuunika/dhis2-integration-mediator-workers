@@ -27,7 +27,7 @@ module.exports = async spinner => {
   await info('preparing connection', label)
 
   const host = env.DFQW_DATABASE_HOST || 'localhost'
-  const username = env.DFQW_DATABASE_USERNAME || 'root'
+  const username = env.DFQW_DATABASE_USERNAME || ''
   const password = env.DFQW_DATABASE_PASSWORD || ''
   const database = env.DFQW_DATABASE
 
