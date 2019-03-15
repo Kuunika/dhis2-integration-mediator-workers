@@ -59,7 +59,21 @@ source data/schema.sql;
 \q
 ```
 
-### step 4: environmental variables
+### step 4: Bootstrap the application using Lerna
+
+Install the Lerna command line tool
+
+```sh
+sudo npm install -g lerna
+```
+
+Boostrap your application using lerna
+
+```sh
+lerna bootstrap
+```
+
+### step 5: environmental variables
 
 Create a `.env` file with the contents of your .env.example file.
 
