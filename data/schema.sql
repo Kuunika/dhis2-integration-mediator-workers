@@ -1,13 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.12, for macos10.13 (x86_64)
---
--- Host: localhost    Database: dhis2-integration-mediator
--- ------------------------------------------------------
--- Server version	8.0.12
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
- SET NAMES utf8 ;
+/*!40101 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -16,97 +11,83 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `client`
+-- Table structure for table `Client`
 --
 
-DROP TABLE IF EXISTS `client`;
+DROP TABLE IF EXISTS `Client`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `client` (
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Client` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `dataelement`
+-- Table structure for table `DataElement`
 --
 
-DROP TABLE IF EXISTS `dataelement`;
+DROP TABLE IF EXISTS `DataElement`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `dataelement` (
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `DataElement` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `dataElementId` varchar(45) NOT NULL,
   `dataElementName` varchar(500) NOT NULL,
   `dataSetId` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1357 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1355 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `dataset`
+-- Table structure for table `DataSet`
 --
 
-DROP TABLE IF EXISTS `dataset`;
+DROP TABLE IF EXISTS `DataSet`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `dataset` (
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `DataSet` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `clientId` int(11) NOT NULL,
   `categoryCombo` varchar(100) NOT NULL,
   `dhis2Id` varchar(100) NOT NULL,
   `description` varchar(500) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `dumi`
+-- Table structure for table `FailQueue`
 --
 
-DROP TABLE IF EXISTS `dumi`;
+DROP TABLE IF EXISTS `FailQueue`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `dumi` (
-  `iddumi` int(11) NOT NULL AUTO_INCREMENT,
-  `nosql` json NOT NULL,
-  PRIMARY KEY (`iddumi`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `failqueue`
---
-
-DROP TABLE IF EXISTS `failqueue`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `failqueue` (
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `FailQueue` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `value` int(11) NOT NULL,
-  `migratedAt` datetime DEFAULT CURRENT_TIMESTAMP,
-  `dataElementId` varchar(100) NOT NULL,
+  `migratedAt` datetime DEFAULT NULL,
+  `dataElementId` varchar(100) DEFAULT NULL,
   `migrationId` int(11) DEFAULT NULL,
-  `attempts` int(11) NOT NULL,
-  `isProcessed` tinyint(1) DEFAULT '0',
-  `isMigrated` tinyint(1) DEFAULT '0',
-  `period` varchar(45) NOT NULL,
-  `organizationUnitCode` varchar(45) NOT NULL,
+  `attempts` int(11) DEFAULT NULL,
+  `isProcessed` tinyint(1) DEFAULT NULL,
+  `isMigrated` tinyint(1) DEFAULT NULL,
+  `period` varchar(45) DEFAULT NULL,
+  `organizatioUnitCode` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=317 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `migration`
+-- Table structure for table `Migration`
 --
 
-DROP TABLE IF EXISTS `migration`;
+DROP TABLE IF EXISTS `Migration`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `migration` (
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Migration` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `uploadedAt` datetime DEFAULT NULL,
   `structureValidatedAt` datetime DEFAULT NULL,
@@ -122,29 +103,29 @@ CREATE TABLE `migration` (
   `migrationCompletedAt` datetime DEFAULT NULL,
   `clientId` int(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `migrationdataelements`
+-- Table structure for table `MigrationDataElements`
 --
 
-DROP TABLE IF EXISTS `migrationdataelements`;
+DROP TABLE IF EXISTS `MigrationDataElements`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `migrationdataelements` (
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `MigrationDataElements` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `organizationUnitCode` varchar(45) NOT NULL,
   `dataElementId` int(11) NOT NULL,
   `migrationId` int(11) NOT NULL,
   `value` int(11) NOT NULL,
-  `isValueValid` tinyint(1) NOT NULL,
-  `isElementAuthorized` tinyint(1) NOT NULL,
-  `isProcessed` tinyint(1) NOT NULL,
+  `isValueValid` tinyint(4) NOT NULL,
+  `isElementAuthorized` tinyint(4) NOT NULL,
+  `isProcessed` tinyint(4) NOT NULL,
   `period` varchar(45) NOT NULL,
-  `isMigrated` tinyint(1) NOT NULL,
+  `isMigrated` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`,`organizationUnitCode`)
-) ENGINE=InnoDB AUTO_INCREMENT=347 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=348 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -156,4 +137,4 @@ CREATE TABLE `migrationdataelements` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-05 14:36:32
+-- Dump completed on 2019-03-15  8:11:18

@@ -5,7 +5,7 @@ const _ = require('lodash');
 const EventEmitter = require('events');
 const moment = require('moment');
 const { Logger } = require('./utils/logger');
-
+const migrate = require('./migrate');
 const {
   getMigrationModel,
   getMigrationDataElementsModel,
@@ -139,7 +139,7 @@ const handleQueueConnection = async (err, conn) => {
           logger.info('Acknowldging migration done')
         });
 
-        let failureOccured = false
+        let failureOccured = false;
         let isMigrating = true;
         let offset = 0;
         const limit = Number(process.env.MW_DATA_CHUNK_SIZE || 200);
@@ -155,34 +155,13 @@ const handleQueueConnection = async (err, conn) => {
             logger.info(`migrating for limit ${limit} and offset ${offset}`)
             //pagination increment
             offset += limit;
-
             const dataValues = [];
-            for (const migrationDataElement of migrationDataElements) {
-              const dataElement = await DataElement.findByPk(
-                migrationDataElement.dataValues.dataElementId
-              ).catch(err => logger.info(err.message));
-              if (dataElement) {
-                await dataValues.push({
-                  dataElement: dataElement.dataValues.dataElementId,
-                  value: migrationDataElement.dataValues.value,
-                  orgUnit: migrationDataElement.dataValues.organizationUnitCode,
-                  period: migrationDataElement.dataValues.period,
-                  id: migrationDataElement.dataValues.id
-                });
-              }
-            }
-            const response = await axios({
-              url: `${process.env.MW_DHIS2_URL}/dataValueSets`,
-              method: 'POST',
-              data: {
-                dataValues
-              },
-              auth: {
-                username: process.env.MW_DHIS2_USERNAME,
-                password: process.env.MW_DHIS2_PASSWORD
-              }
-            }).catch(err => logger.info(err.message));
-            //all good here
+            const response = await migrate(
+              migrationDataElements,
+              dataValues,
+              sequelize,
+              logger
+            );
             if (response) {
               await updateOnSucessfullMigration(migrationId, dataValues.length);
               idsToUpdate = [...idsToUpdate, ...dataValues.map(dataValue => dataValue.id)];
@@ -204,13 +183,11 @@ const handleQueueConnection = async (err, conn) => {
         } else {
           //TODO: replace with real email
           await sendEmail(migrationId, 'openlmis@gmail.com', false, logger, channelId);
-          logger.info('email sent')
           await MigrationDataElements.update(
             { isMigrated: true },
             { where: { id: idsToUpdate } }
           );
         }
-        //reporting purposes
         await completeMigration(migrationId);
         await acknowlegdementEmitter.emit('$migrationDone')
       },
