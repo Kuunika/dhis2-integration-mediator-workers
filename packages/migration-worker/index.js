@@ -132,7 +132,7 @@ const handleQueueConnection = async (err, conn) => {
         const { migrationId = null, channelId } = JSON.parse(msg.content.toString());
         const logger = new Logger(channelId);
         logger.info('Starting migration into DHIS2')
-        //acknowlegde on migration finished
+
         const acknowlegdementEmitter = new EventEmitter();
         acknowlegdementEmitter.on('$migrationDone', () => {
           ch.ack(msg);
@@ -155,23 +155,18 @@ const handleQueueConnection = async (err, conn) => {
             logger.info(`migrating for limit ${limit} and offset ${offset}`)
             //pagination increment
             offset += limit;
-            const dataValues = [];
             const response = await migrate(
               migrationDataElements,
-              dataValues,
               sequelize,
               logger
             );
+
             if (response) {
+              const { dataValues } = response;
               await updateOnSucessfullMigration(migrationId, dataValues.length);
               idsToUpdate = [...idsToUpdate, ...dataValues.map(dataValue => dataValue.id)];
             } else {
               failureOccured = true;
-              const failedDataElements = await migrationDataElements.map(migrationDataElement => ({
-                ...migrationDataElement.dataValues,
-                attempts: 1
-              }));
-              await FailQueue.bulkCreate(failedDataElements);
             }
           } else {
             isMigrating = false

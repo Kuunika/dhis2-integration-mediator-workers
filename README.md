@@ -36,7 +36,7 @@ Install all the dependencies
 npm install
 ```
 
-### step 3: database
+### step 3: Create both test and production databases
 
 Create a schema in mysql database called `dhis2-integration-mediator`:
 

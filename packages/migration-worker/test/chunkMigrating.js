@@ -1,56 +1,64 @@
-// const amqplib = require("amqplib/callback_api");
-// const fakeAmqplib = require("exp-fake-amqplib")
-// amqplib.connect = fakeAmqplib.connect;
+const amqplib = require("amqplib/callback_api");
+const fakeAmqplib = require("exp-fake-amqplib")
+amqplib.connect = fakeAmqplib.connect;
+const ora = require('ora');
+const { Logger } = require('../utils/logger');
 
-// const pushToMigrationQueue = require('./pushToMigrationQueue');
+const { generateElements, clearElements } = require('./fake-migration-data-elements');
 
-// require("chai").should();
-// const { expect } = require("chai");
+require("chai").should();
+const { expect } = require("chai");
 
-// describe("Migration in chunks", () => {
-//   let connect;
-//   beforeEach(function (done) {
-//     connect = amqplib.connect;
-//     done()
-//   })
+const migrate = require('../migrate');
 
-//   afterEach(function (done) {
-//     connect = null;
-//     done()
-//   })
+const {
+  getFailQueueModel
+} = require("../models");
 
-//   const host = "amqp://localhost";
-//   const exchange = "INTEGRATION_MEDIATOR_TEST_1";
-//   // describe(".connect()", () => {
-//   //   it("exposes the expected api on connection", (done) => {
-//   //     connect(host, null, (err, connection) => {
-//   //       if (err) return done(err);
-//   //       expect(connection).have.property("createChannel").that.is.a("function");
-//   //       expect(connection).have.property("createConfirmChannel").that.is.a("function");
-//   //       expect(connection).have.property("close").that.is.a("function");
-//   //       expect(connection).have.property("on").that.is.a("function");
-//   //       done();
-//   //     });
-//   //   });
-//   // });
+describe('Migration in chunks', async function () {
+  let connect;
+  const host = "amqp://localhost";
+  const queName = 'MIGRATION_MEDIATOR_TEST'
+  let migrationDataElements;
 
-//   it("Sends a payload to the queue for processing", (done) => {
-//     connect(
-//       host,
-//       null,
-//       function (err, conn) {
-//         if (err) console.log(err);
-//         conn.createChannel(function (err, ch) {
-//           const message = JSON.stringify({
-//             migrationId: "100",
-//             channelId: "xxx-aaa",
-//           });
-//           ch.publish(exchange, '', Buffer.from(message));
-//           console.log(" [x] Sent %s", message);
-//           done();
-//         });
-//         setTimeout(function () { conn.close(); process.exit(0) }, 500);
-//       },
-//     );
-//   })
-// });
+  beforeEach(async function () {
+    connect = amqplib.connect;
+    migrationDataElements = await generateElements();
+  })
+
+  afterEach(async function () {
+    await clearElements();
+    setTimeout(function () { process.exit(0) }, 2000);
+  })
+  it("exposes the expected api on connection", async function (done) {
+    connect(host, null, (err, connection) => {
+      if (err) return done(err);
+      expect(connection).have.property("createChannel").that.is.a("function");
+      expect(connection).have.property("createConfirmChannel").that.is.a("function");
+      done();
+    });
+  });
+
+  it('migrates a given chunk', async function () {
+    connect(host, null, async function (err, connection) {
+      if (err) return err
+      connection.createChannel(async function (err, ch) {
+        const spinner = ora();
+        const sequelize = await require("./database")(spinner);
+        const result = await migrate(
+          migrationDataElements,
+          sequelize,
+          new Logger('xxx-aaa')
+        );
+        if (result) {
+          const { response } = result;
+          const FailQueue = await getFailQueueModel(sequelize);
+          const failQueueEntries = await FailQueue.findAll();
+          expect(response.status).to.equal(200);
+          expect(response.data.status).to.equal("SUCCESS");
+          expect(failQueueEntries.length).to.equal(0);
+        }
+      })
+    })
+  })
+})

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon .",
-    "test": "mocha"
+    "test": "mocha --timeout 15000"
   },
   "keywords": [],
   "author": "",
