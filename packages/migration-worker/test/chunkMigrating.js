@@ -6,7 +6,6 @@ const { Logger } = require('../utils/logger');
 
 const { generateElements, clearElements } = require('./fake-migration-data-elements');
 
-require("chai").should();
 const { expect } = require("chai");
 
 const migrate = require('../migrate');

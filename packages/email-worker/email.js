@@ -9,8 +9,8 @@ const {
   getFailQueueModel
 } = require('./models')
 
-module.exports = async (data, spinner, logger) => {
-  const sequelize = await require('./database')(spinner)
+module.exports = async (data, spinner, logger, trans, seq) => {
+  const sequelize = seq || await require('./database')(spinner)
 
   const Migration = await getMigrationModel(sequelize)
 
@@ -25,7 +25,7 @@ module.exports = async (data, spinner, logger) => {
           ...migration.dataValues,
           ...(await getSum(sequelize, migrationId, logger))
         }
-    await sendEmail(res, data, spinner, logger)
+    await sendEmail(res, data, spinner, logger, trans)
   } else {
     logger.info('No migration was found')
   }
@@ -54,7 +54,7 @@ const getSum = async (sequelize, migrationId, logger) => {
   return aggregateData
 }
 
-const sendEmail = async (migration, queueData, spinner, logger) => {
+const sendEmail = async (migration, queueData, spinner, logger, trans) => {
   const { source, flag } = queueData
 
   let file = source
@@ -78,20 +78,24 @@ const sendEmail = async (migration, queueData, spinner, logger) => {
     html,
     text
   }
-
-  const transport = nodemailer.createTransport({
+  const configurations = {
     host: process.env.DEW_MAIL_HOST,
     port: process.env.DEW_MAIL_PORT,
     auth: {
       user: process.env.DEW_MAIL_USER,
       pass: process.env.DEW_MAIL_PASS
     }
-  })
+  }
+  const transport = (nodemailer.createTransport(trans || configurations))
 
-  const { rejected = [] } = await transport.sendMail(mailOptions)
-  if (rejected.length > 0) {
-    logger.info('email: email rejected')
-  } else {
-    logger.info(`email: email sent successfully`)
+  const response = await transport.sendMail(mailOptions)
+
+  // could be in test mode where response is undefined
+  if (response) {
+    if (response.rejected.length > 0) {
+      logger.info('email: email rejected')
+    } else {
+      logger.info(`email: email sent successfully`)
+    }
   }
 }
